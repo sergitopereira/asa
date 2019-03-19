@@ -41,14 +41,14 @@ class ParseObjects(object):
          range 192.168.1.0 192.168.1.10
         :return dic
         """
-        flag_host_fqdn_range=False
+        flag_host_fqdn_range = False
         network_host = {}
         network_fqdn = {}
         network_range = {}
-        network={}
+        network = {}
         regex_name = r'object\snetwork\s(.*)'
         regex_value = r'(host|fqdn|range)\s(.*)'
-        for line in  self.running_config:
+        for line in self.running_config:
             if line.startswith("object "):
                 flag_host_fqdn_range = True
                 name = re.search(regex_name, line).group(1)
@@ -60,9 +60,11 @@ class ParseObjects(object):
                     fqdn = re.search(regex_value, line).group(2)
                     network_fqdn[name] = fqdn
             if "range" in line:
-                    range = re.search(regex_value, line).group(2)
-                    network_range[name] = range
+                range = re.search(regex_value, line).group(2)
+                network_range[name] = range
         network['host'] = network_host
         network['fqdn'] = network_fqdn
         network['range'] = network_range
         return network
+
+
