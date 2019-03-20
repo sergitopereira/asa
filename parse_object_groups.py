@@ -44,10 +44,6 @@ class ParseObjects(object):
         :return dic
         """
         flag_host_fqdn_range = False
-        network_host = {}
-        network_fqdn = {}
-        network_range = {}
-        network_subnet = {}
         network = {}
         regex_name = r'object\snetwork\s(.*)'
         regex_value = r'(host|fqdn|range|subnet)\s(.*)'
@@ -57,23 +53,17 @@ class ParseObjects(object):
             if line.startswith("object network"):
                 flag_host_fqdn_range = True
                 name = re.search(regex_name, line).group(1)
+                value = []
             if flag_host_fqdn_range:
                 if "host" in line:
-                    ip = re.search(regex_value, line).group(2)
-                    network_host[name] = ip
+                    value = [re.search(regex_value, line).group(2), 'host']
                 if "fqdn" in line:
-                    fqdn = re.search(regex_value, line).group(2)
-                    network_fqdn[name] = fqdn
+                    value = [re.search(regex_value, line).group(2), 'fqdn']
                 if "range" in line:
-                    range = re.search(regex_value, line).group(2)
-                    network_range[name] = range
+                    value = [re.search(regex_value, line).group(2), 'range']
                 if "subnet" in line:
-                    range = re.search(regex_value, line).group(2)
-                    network_subnet[name] = range
-        network['host'] = network_host
-        network['fqdn'] = network_fqdn
-        network['range'] = network_range
-        network['subnet'] = network_subnet
+                    value = [re.search(regex_value, line).group(2), 'subnet']
+                network[name] = value
         return network
 
     def parse_object_group_network(self):
@@ -109,6 +99,7 @@ class ParseObjects(object):
         :return: dictionary
         """
         names = self.parse_names()
+        object_networks = self.parse_object_networks()
         expanded_group_object = OrderedDict()
         group_objects = self.parse_object_group_network()
         for key, value in group_objects.items():
@@ -128,5 +119,9 @@ class ParseObjects(object):
                     mask = IPAddress(item.split()[2]).netmask_bits()
                     network_cidr = '{}/{}'.format(network, mask)
                     expanded_value.append(network_cidr)
+                if 'network-object object' in item:
+                    obj = item.split()[2]
+                    if len(object_networks[obj]) > 1:
+                        expanded_value.append(object_networks[obj][0])
                 expanded_group_object[key] = expanded_value
         return expanded_group_object
