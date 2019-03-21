@@ -44,7 +44,7 @@ class ParseObjects(object):
         :return dic
         """
         flag_host_fqdn_range = False
-        network = {}
+        network = OrderedDict()
         regex_name = r'object\snetwork\s(.*)'
         regex_value = r'(host|fqdn|range|subnet)\s(.*)'
         for line in self.running_config:
