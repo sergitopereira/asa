@@ -21,6 +21,15 @@ object network OfficeNet
  subnet 192.168.0.0 255.255.255.0
 object network net1
  range 192.168.1.0 192.168.1.10
+!
+omitted output
+!
+object-group service EXAM-PORTS tcp
+ port-object eq 1301
+ port-object eq 130
+object-group service WEB-PORTS tcp
+ port-object eq 80
+ port-object eq 443
 '''
 
 
@@ -39,5 +48,12 @@ class TestParseObjects(unittest.TestCase):
                                     'OfficeNet': ['192.168.0.0 255.255.255.0', 'subnet'],
                                     'net1': ['192.168.1.0 192.168.1.10', 'range']}
         a = ParseObjects(running_config_name)
-        print(a.parse_object_networks())
         self.assertEqual(expected_dict_object_net, a.parse_object_networks())
+
+    def test_parse_object_group_service(self):
+        expected_dict_object_service = {'EXAM-PORTS': ['1301', '130'],
+                                        'WEB-PORTS': ['80', '443'],
+                                        }
+        a = ParseObjects(running_config_name)
+        print(a.parse_object_group_service())
+        self.assertEqual(expected_dict_object_service, a.parse_object_group_service())

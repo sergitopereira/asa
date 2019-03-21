@@ -125,3 +125,31 @@ class ParseObjects(object):
                         expanded_value.append(object_networks[obj][0])
                 expanded_group_object[key] = expanded_value
         return expanded_group_object
+
+    def parse_object_group_service(self):
+        """
+        Method to parse object-group service
+        :return: dictionary
+         object-group service EXAM-PORTS tcp|udp|tcp-udp
+          port-object eq 1301
+          port-object eq 1302
+          group-object HTTP-PORTS
+        """
+        object_service = OrderedDict()
+        for line in self.running_config:
+            if not any((i in line for i in ['service-object', 'group-object', 'description', 'port-object'])):
+                flag_object_service = False
+            if line.startswith("object-group service"):
+                flag_object_service = True
+                name = line.split()[2]
+                value = []
+            if flag_object_service:
+                if 'port-object' in line:
+                    print(line)
+                    value.append(line.split()[2])
+                if 'group-object' in line:
+                    value.append(line.split()[1])
+                if 'service-object' in line:
+                    value.append(line.split()[3])
+                object_service[name] = value
+        return object_service
