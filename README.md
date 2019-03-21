@@ -1,6 +1,6 @@
 # Cisco ASA repository
 
-This repository is 
+Purpose of this repository is to parse running configuration of cisco ASA running-config
 
 Usage:
 ```python
