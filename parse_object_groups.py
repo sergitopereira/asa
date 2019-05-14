@@ -57,7 +57,7 @@ class ParseObjects(object):
             if flag_host_fqdn_range:
                 if "host" in line:
                     value = [re.search(regex_value, line).group(2), 'host']
-                if "fqdn" in line:
+                if line.startswith('fqdn') :
                     value = [re.search(regex_value, line).group(2), 'fqdn']
                 if "range" in line:
                     value = [re.search(regex_value, line).group(2), 'range']
